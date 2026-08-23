@@ -22,27 +22,37 @@ Run this **inside the Linux environment that will become the AgentBox appliance*
 curl -fsSL https://raw.githubusercontent.com/NevynIt/AgentBoxV3-bootstrap/main/install.sh | bash
 ```
 
+The fetch command itself obviously needs `curl`. Current Ubuntu images commonly include it, but a minimal installation may not. If `curl` is missing, install only that fetch prerequisite first:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+```
+
+Then rerun the bootstrap command.
+
 That Linux environment may be:
 
 - an Ubuntu Multipass VM;
-- Ubuntu under WSL2 with systemd enabled; or
+- Ubuntu under WSL2 with systemd enabled;
+- another Ubuntu VM; or
 - a native Ubuntu Linux machine.
 
-AgentBox installation requires operating-system administrator rights for host packages, Docker, and optionally local Ollama. If your Linux user does not have passwordless sudo, the installer will explain why elevation is needed and `sudo` will ask for your Linux password directly. The password is handled by `sudo`; it is not read or stored by AgentBox.
+AgentBox installation requires operating-system administrator rights for host packages, Docker, and optionally local Ollama. If your Linux user does not have passwordless sudo, the installer explains why elevation is needed and `sudo` asks for your Linux password directly. The password is handled by `sudo`; it is not read or stored by AgentBox.
 
 Because AgentBox V3 is currently private, GitHub authentication is also required. The bootstrap launches the normal GitHub CLI browser/device login. The resulting credential is stored in the target Linux user's GitHub CLI configuration and is reused by normal AgentBox Git pull/push operations.
 
-Do not paste GitHub tokens, provider API keys, SSH private keys, or AgentBox control passphrases into prompts or command-line arguments.
+Do not paste GitHub tokens, provider API keys, sudo passwords, SSH private keys, or AgentBox control passphrases into prompts or command-line arguments.
 
 ## Outside-Linux preparation
 
 The public bootstrap cannot create its own Linux host. Create/enter the target first:
 
 - **Multipass:** create or restore the Ubuntu VM, then `multipass shell <name>`.
-- **WSL2:** install/enter an Ubuntu WSL2 distribution and ensure systemd is enabled.
+- **WSL2:** install/enter an Ubuntu WSL2 distribution; the Product installer can help enable systemd if needed.
 - **Native Linux:** open a normal terminal on the Ubuntu host.
 
-Then run the one-line bootstrap above.
+Then run the bootstrap above.
 
 ## Scope
 
