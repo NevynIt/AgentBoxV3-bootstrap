@@ -44,6 +44,10 @@ If you ever see a sudo password prompt on a VM where ordinary commands such as `
 
 Because AgentBox V3 is currently private, GitHub authentication is also required. The bootstrap launches the normal GitHub CLI browser/device login. The resulting credential is stored in the target Linux user's GitHub CLI configuration and is reused by normal AgentBox Git pull/push operations.
 
+After handoff, the Product installer front-loads the remaining human work. It prepares the small prerequisite set needed for the interview, verifies GitHub and temporary reconstruction-Codex authentication, collects backend/model/secret/control-passphrase choices, shows one non-secret installation plan, and asks for a final `Proceed` confirmation. After that point installation is unattended: package installation, repository convergence, Docker builds, model downloads, backend/Core reconciliation, temporary reconstruction and final health checks either complete without further questions or fail with a diagnostic for a later rerun.
+
+On a host with passworded sudo, the accepted Product run keeps the already-authorized sudo timestamp alive so a long build or model download does not unexpectedly stop later for another password. WSL2 without systemd is the deliberate exception: enabling systemd requires `wsl --shutdown` and a rerun before the Product configuration interview begins.
+
 Do not paste GitHub tokens, provider API keys, sudo passwords, SSH private keys, or AgentBox control passphrases into prompts or command-line arguments.
 
 ## Outside-Linux preparation
