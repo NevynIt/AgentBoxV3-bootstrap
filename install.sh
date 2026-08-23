@@ -28,12 +28,20 @@ need_admin() {
         return
     fi
     command -v sudo >/dev/null 2>&1 || die "sudo is required to install missing host packages."
-    say
-    say "AgentBox may need operating-system administrator rights to install host prerequisites."
-    say "If sudo asks for a password, enter your Linux user password directly at the sudo prompt."
-    say "AgentBox does not receive or store that password."
-    sudo -v <"$TTY_DEVICE"
     SUDO=(sudo)
+
+    # Test an actual privileged command first. `sudo -v` is not a reliable
+    # passwordless-sudo probe when sudoers contains mixed PASSWD/NOPASSWD rules.
+    if sudo -n true >/dev/null 2>&1; then
+        say "Passwordless sudo is available."
+        return
+    fi
+
+    say
+    say "AgentBox needs operating-system administrator rights to install host prerequisites."
+    say "This Linux host requires sudo authentication. Enter your Linux user password at the sudo prompt."
+    say "The password is handled by sudo; AgentBox does not receive or store it."
+    sudo true <"$TTY_DEVICE" || die "Unable to obtain sudo administrator rights."
 }
 
 missing=()
@@ -45,7 +53,11 @@ if [ "${#missing[@]}" -gt 0 ]; then
     need_admin
     say "Installing public-bootstrap prerequisites: ${missing[*]}"
     "${SUDO[@]}" apt-get update
-    DEBIAN_FRONTEND=noninteractive "${SUDO[@]}" apt-get install -y ca-certificates curl git gh
+    if [ "${#SUDO[@]}" -gt 0 ]; then
+        "${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl git gh
+    else
+        env DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl git gh
+    fi
 fi
 
 say
