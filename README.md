@@ -22,7 +22,7 @@ Run this **inside the Linux environment that will become the AgentBox appliance*
 curl -fsSL https://raw.githubusercontent.com/NevynIt/AgentBoxV3-bootstrap/main/install.sh | bash
 ```
 
-The fetch command itself obviously needs `curl`. Current Ubuntu images commonly include it, but a minimal installation may not. If `curl` is missing, install only that fetch prerequisite first:
+The fetch command itself needs `curl`. Current Ubuntu images commonly include it, but a minimal installation may not. If `curl` is missing, install only that fetch prerequisite first:
 
 ```bash
 sudo apt-get update
@@ -38,7 +38,9 @@ That Linux environment may be:
 - another Ubuntu VM; or
 - a native Ubuntu Linux machine.
 
-AgentBox installation requires operating-system administrator rights for host packages, Docker, and optionally local Ollama. If your Linux user does not have passwordless sudo, the installer explains why elevation is needed and `sudo` asks for your Linux password directly. The password is handled by `sudo`; it is not read or stored by AgentBox.
+AgentBox installation requires operating-system administrator rights for host packages, Docker, and optionally local Ollama. The installer first probes a real privileged command with `sudo -n true`. If the host provides passwordless sudo—as standard Multipass/cloud images commonly do—it proceeds without asking for a password. Only a host that genuinely requires sudo authentication should display a password prompt. In that case, enter the Linux account password directly at the sudo prompt; AgentBox does not read or store it.
+
+If you ever see a sudo password prompt on a VM where ordinary commands such as `sudo ls` are passwordless, abort with `Ctrl-C` and rerun the latest bootstrap. Older bootstrap revisions used `sudo -v`, which can prompt incorrectly on systems with mixed `PASSWD`/`NOPASSWD` sudoers rules.
 
 Because AgentBox V3 is currently private, GitHub authentication is also required. The bootstrap launches the normal GitHub CLI browser/device login. The resulting credential is stored in the target Linux user's GitHub CLI configuration and is reused by normal AgentBox Git pull/push operations.
 
